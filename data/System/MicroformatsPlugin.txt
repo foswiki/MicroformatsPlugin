@@ -2,7 +2,7 @@
 <a href="http://microformats.org/" style="float:right;padding:12px;"><img src="%ATTACHURLPATH%/logo.gif" alt="microformats"/></a>
 <!--
 One line description, required for extensions repository catalog.
-   * Set SHORTDESCRIPTION = microformat support for TWiki
+   * Set SHORTDESCRIPTION = microformat support for Foswiki
 -->
 %SHORTDESCRIPTION%
 
@@ -12,11 +12,17 @@ One line description, required for extensions repository catalog.
 This Plugins adds support for a number of [[http://microformats.org][microformats]]. 
    1 <img src="%ATTACHURLPATH%/MicroID.png" alt="microID"/> [[http://microid.org][MicroID]], which allows a user to Verifiably Claim their User Topic, through the use of a hash of the Url and their registered email address
       * The microid will be automatically added to the html header when viewing any user's topic.
-   1 <img src="%ATTACHURLPATH%/icon-hcard.png" alt="xfn"/> [[http://microformats.org/wiki/hcard][hCard]] with a little xfn, a simple, open, distributed format for representing TWiki users. 
+   1 <img src="%ATTACHURLPATH%/icon-hcard.png" alt="xfn"/> [[http://microformats.org/wiki/hcard][hCard]] with a little xfn, a simple, open, distributed format for representing Foswiki users. 
       * useage: =%<nop>HCARD{"WikiName"}% - uses the %SYSTEMWEB%.UserForm data on a user's Topic to create a hCard.
       * perhaps will need to use JS to auto add hCards to user topics?
+   1 =HEVENT{start="" end="" url="" location="" summary="" description=""}= calendar view (work in progress)
 
 ---++ Examples
+If installed and enabled (=%<nop>HCARD{%<nop>WIKINAME%}%=):
+%HCARD{%WIKINAME%}%
+
+=HEVENT{start="" end="" url="" location="" summary="" description=""}=
+%HEVENT{start="%DATE%" url="http://fosiki.com"  summary="fosiki rocks your foswiki" description="free open source works."}%
 
 ---++ Browser addins
 [[http://microformats.org/wiki/Safari][Safari microformats plugin]] and [[http://microformats.org/wiki/Operator][Operator for Firefox]] are 2 addins that extend your Browser to help you use Microformats.
@@ -29,15 +35,14 @@ This Plugins adds support for a number of [[http://microformats.org][microformat
    * [[http://factorycity.net/projects/microformats-icons/][Microformat Icons]] by [[http://bartelme.at/][Wolfgang Bartelme]]
    * [[http://www.hicksdesign.co.uk/journal/highlight-microformats-with-css][expose-mf.css]] by Hicks Design
 
-|  Plugin Author: | TWiki:Main.SvenDowideit - SvenDowideit@fosiki.com - <img src="%ATTACHURLPATH%/wikiringlogo20x20.png" /> [[http://www.wikiring.com][WikiRing.com]] |
+|  Plugin Author: | Foswiki:Main.SvenDowideit - SvenDowideit@fosiki.com - <img src="%ATTACHURLPATH%/wikiringlogo20x20.png" /> [[http://www.wikiring.com][WikiRing.com]] |
 |  Copyright: | &copy; 2008, SvenDowideit@fosiki.com |
 |  License: | <a href="http://www.gnu.org/licenses/gpl.html" rel="license">GPL (Gnu General Public License)</a> |
 |  Plugin Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  20 Feb 2008: | initial release for foswiki |
 |  Dependencies: | %$DEPENDENCIES% |
-|  Plugin Home: | http://twiki.org/cgi-bin/view/Plugins/MicroformatsPlugin |
-|  Feedback: | http://twiki.org/cgi-bin/view/Plugins/MicroformatsPluginDev |
-|  Appraisal: | http://twiki.org/cgi-bin/view/Plugins/MicroformatsPluginAppraisal |
+|  Plugin Home: | http://foswiki.org/Extensions/MicroformatsPlugin |
 
 __Related Topics:__ [[%SYSTEMWEB%.Plugins][Plugins]], %SYSTEMWEB%.DeveloperDocumentationCategory, %SYSTEMWEB%.AdminDocumentationCategory, %SYSTEMWEB%.DefaultPreferences, %USERSWEB%.SitePreferences
 
