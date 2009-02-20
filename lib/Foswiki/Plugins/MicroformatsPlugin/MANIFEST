@@ -1,5 +1,5 @@
 # Release manifest for MicroformatsPlugin
-data/Foswiki/MicroformatsPlugin.txt 0644 Documentation
+data/System/MicroformatsPlugin.txt 0644 Documentation
 lib/Foswiki/Plugins/MicroformatsPlugin.pm 0644 Perl module
 lib/Foswiki/Plugins/MicroformatsPlugin/Config.spec
 
@@ -7,34 +7,34 @@ templates/hcard.tmpl
 templates/hevent.tmpl
 templates/hcardcss.tmpl
 
-pub/Foswiki/MicroformatsPlugin/expose-mf.css
+pub/System/MicroformatsPlugin/expose-mf.css
 #http://code.google.com/p/js-hcalendar/
-pub/Foswiki/MicroformatsPlugin/hcalendar.js
-pub/Foswiki/MicroformatsPlugin/calendar.css
-pub/Foswiki/MicroformatsPlugin/hcard.css
-pub/Foswiki/MicroformatsPlugin/minicalendar.css
+pub/System/MicroformatsPlugin/hcalendar.js
+pub/System/MicroformatsPlugin/calendar.css
+pub/System/MicroformatsPlugin/hcard.css
+pub/System/MicroformatsPlugin/minicalendar.css
 
 
-pub/Foswiki/MicroformatsPlugin/MicroID.png
-pub/Foswiki/MicroformatsPlugin/icon-set.png
-pub/Foswiki/MicroformatsPlugin/xfn-sweetheart-met.png
-pub/Foswiki/MicroformatsPlugin/Vote_Template.psd
-pub/Foswiki/MicroformatsPlugin/icon-xfn.png
-pub/Foswiki/MicroformatsPlugin/vote_against.png
-pub/Foswiki/MicroformatsPlugin/icon-hcard-add.png
-pub/Foswiki/MicroformatsPlugin/xfn-colleague.png
-pub/Foswiki/MicroformatsPlugin/wikiringlogo20x20.png
-pub/Foswiki/MicroformatsPlugin/icon-hresume.png
-pub/Foswiki/MicroformatsPlugin/icon-rel-tag.png
-pub/Foswiki/MicroformatsPlugin/xfn-friend-met.png
-pub/Foswiki/MicroformatsPlugin/vote_for.png
-pub/Foswiki/MicroformatsPlugin/icon-hatom.png
-pub/Foswiki/MicroformatsPlugin/xfn-friend.png
-pub/Foswiki/MicroformatsPlugin/xfn-colleague-met.png
-pub/Foswiki/MicroformatsPlugin/logo.gif
-pub/Foswiki/MicroformatsPlugin/icon-hcard-download.png
-pub/Foswiki/MicroformatsPlugin/xfn-sweetheart.png
-pub/Foswiki/MicroformatsPlugin/xfn-me.png
-pub/Foswiki/MicroformatsPlugin/vote_abstain.png
-pub/Foswiki/MicroformatsPlugin/icon-hcalendar.png
+pub/System/MicroformatsPlugin/MicroID.png
+pub/System/MicroformatsPlugin/icon-set.png
+pub/System/MicroformatsPlugin/xfn-sweetheart-met.png
+pub/System/MicroformatsPlugin/Vote_Template.psd
+pub/System/MicroformatsPlugin/icon-xfn.png
+pub/System/MicroformatsPlugin/vote_against.png
+pub/System/MicroformatsPlugin/icon-hcard-add.png
+pub/System/MicroformatsPlugin/xfn-colleague.png
+pub/System/MicroformatsPlugin/wikiringlogo20x20.png
+pub/System/MicroformatsPlugin/icon-hresume.png
+pub/System/MicroformatsPlugin/icon-rel-tag.png
+pub/System/MicroformatsPlugin/xfn-friend-met.png
+pub/System/MicroformatsPlugin/vote_for.png
+pub/System/MicroformatsPlugin/icon-hatom.png
+pub/System/MicroformatsPlugin/xfn-friend.png
+pub/System/MicroformatsPlugin/xfn-colleague-met.png
+pub/System/MicroformatsPlugin/logo.gif
+pub/System/MicroformatsPlugin/icon-hcard-download.png
+pub/System/MicroformatsPlugin/xfn-sweetheart.png
+pub/System/MicroformatsPlugin/xfn-me.png
+pub/System/MicroformatsPlugin/vote_abstain.png
+pub/System/MicroformatsPlugin/icon-hcalendar.png
 
