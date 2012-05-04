@@ -17,20 +17,20 @@
 
 =cut
 
-
 package Foswiki::Plugins::MicroformatsPlugin;
 
-require Foswiki::Func;    # The plugins API
-require Foswiki::Plugins; # For the API version
+require Foswiki::Func;       # The plugins API
+require Foswiki::Plugins;    # For the API version
 use Time::ParseDate;
 
-use vars qw( $VERSION $RELEASE $SHORTDESCRIPTION $debug $pluginName $NO_PREFS_IN_TOPIC 
-    $enablehCardOnUserTopic %isUserTopic);
-$VERSION = '$Rev$';
-$RELEASE = 'Foswiki-1.0';
-$SHORTDESCRIPTION = 'microformat support for Foswiki';
+use vars
+  qw( $VERSION $RELEASE $SHORTDESCRIPTION $debug $pluginName $NO_PREFS_IN_TOPIC
+  $enablehCardOnUserTopic %isUserTopic);
+$VERSION           = '$Rev$';
+$RELEASE           = 'Foswiki-1.0';
+$SHORTDESCRIPTION  = 'microformat support for Foswiki';
 $NO_PREFS_IN_TOPIC = 1;
-$pluginName = 'MicroformatsPlugin';
+$pluginName        = 'MicroformatsPlugin';
 
 =pod
 
@@ -43,33 +43,39 @@ $pluginName = 'MicroformatsPlugin';
 =cut
 
 sub initPlugin {
-    my( $topic, $web, $user, $installWeb ) = @_;
+    my ( $topic, $web, $user, $installWeb ) = @_;
 
     # check for Plugins.pm versions
-    if( $Foswiki::Plugins::VERSION < 1.026 ) {
-        Foswiki::Func::writeWarning( "Version mismatch between $pluginName and Plugins.pm" );
+    if ( $Foswiki::Plugins::VERSION < 1.026 ) {
+        Foswiki::Func::writeWarning(
+            "Version mismatch between $pluginName and Plugins.pm");
         return 0;
     }
-    
+
     #TODO: should reset $isUserTopic{$key} in _finish()
 
     $debug = $Foswiki::cfg{Plugins}{MicroformatsPlugin}{Debug} || 0;
-    Foswiki::Func::registerTagHandler( 'HCARD', \&_HCARD );
+    Foswiki::Func::registerTagHandler( 'HCARD',  \&_HCARD );
     Foswiki::Func::registerTagHandler( 'HEVENT', \&_HEVENT );
+
     #Foswiki::Func::registerRESTHandler('example', \&restExample);
-    
-    my $enableMicroIds = $Foswiki::cfg{Plugins}{MicroformatsPlugin}{enableMicroIds} || 1;
-    $enablehCardOnUserTopic = $Foswiki::cfg{Plugins}{MicroformatsPlugin}{enablehCardOnUserTopic} || 1;
-    if (($enableMicroIds) && (_isUserTopic($web, $topic))) {
-        addMicroIDToHEAD($web, $topic);
+
+    my $enableMicroIds =
+      $Foswiki::cfg{Plugins}{MicroformatsPlugin}{enableMicroIds} || 1;
+    $enablehCardOnUserTopic =
+      $Foswiki::cfg{Plugins}{MicroformatsPlugin}{enablehCardOnUserTopic} || 1;
+    if ( ($enableMicroIds) && ( _isUserTopic( $web, $topic ) ) ) {
+        addMicroIDToHEAD( $web, $topic );
     }
-    if ($enablehCardOnUserTopic && _isUserTopic($web, $topic)) {
+    if ( $enablehCardOnUserTopic && _isUserTopic( $web, $topic ) ) {
+
         #yes, this is woeful
         #TODO: find a repliable way to addd arbitary content to a topic view.
         $enablehCardOnUserTopic = 0;
-        #$_[0] = "%HCARD{'$web.$topic'}%".$_[0];
-        #Foswiki::Func::addToHEAD('hCard', 
-        #    "<div type='hcard' style='display:none;'>%HCARD{\"$web.$topic\"}%</div>");
+
+ #$_[0] = "%HCARD{'$web.$topic'}%".$_[0];
+ #Foswiki::Func::addToHEAD('hCard',
+ #    "<div type='hcard' style='display:none;'>%HCARD{\"$web.$topic\"}%</div>");
     }
 
     # Plugin correctly initialized
@@ -77,68 +83,72 @@ sub initPlugin {
 }
 
 sub addMicroIDToHEAD {
-    my $web = shift;
+    my $web   = shift;
     my $topic = shift;
+
     #code here adapted from Web::MicroID - not using it yet
-    my $algorithm = $Foswiki::cfg{Plugins}{MicroformatsPlugin}{MicroIdAlgol} || 'sha1';
+    my $algorithm = $Foswiki::cfg{Plugins}{MicroformatsPlugin}{MicroIdAlgol}
+      || 'sha1';
 
     my $algor;
-    if ($algorithm eq 'md5')  {
+    if ( $algorithm eq 'md5' ) {
         require Digest::MD5;
         $algor = Digest::MD5->new;
-    } else {
+    }
+    else {
         require Digest::SHA1;
         $algor = Digest::SHA1->new;
     }
 
     # Hash the ID's
     my @emails = Foswiki::Func::wikinameToEmails($topic);
+
     #TODO: maybe make one microid per known email?
-    if (scalar(@emails) > 0) {
-        my $indv = $algor->add($emails[0])->hexdigest();
+    if ( scalar(@emails) > 0 ) {
+        my $indv = $algor->add( $emails[0] )->hexdigest();
         $algor->reset();
-        my $serv = $algor->add(Foswiki::Func::getViewUrl( $web, $topic))->hexdigest();
+        my $serv =
+          $algor->add( Foswiki::Func::getViewUrl( $web, $topic ) )->hexdigest();
         $algor->reset();
 
         # Hash the ID's together and set as the legacy MicroID token
-        my $hash = $algor->add($indv . $serv)->hexdigest();
+        my $hash = $algor->add( $indv . $serv )->hexdigest();
 
-        #TODO: need to extract the mailto and http from the id's
-        #TODO: watch out, the + will soon be replaced, due to html validation errors
-        my $microid = 'mailto+http:'.$algorithm.':'.$hash;
-        my $header = '<meta name="microid" content="'.$microid.'"/>';
+    #TODO: need to extract the mailto and http from the id's
+    #TODO: watch out, the + will soon be replaced, due to html validation errors
+        my $microid = 'mailto+http:' . $algorithm . ':' . $hash;
+        my $header  = '<meta name="microid" content="' . $microid . '"/>';
 
-        Foswiki::Func::addToHEAD('http://microid.org', $header);
+        Foswiki::Func::addToHEAD( 'http://microid.org', $header );
     }
 
     return;
 }
 
 sub _isUserTopic {
-    my $web = shift;
+    my $web   = shift;
     my $topic = shift;
-    
+
     my $key = "$web.$topic";
 
-    return $isUserTopic{$key} if defined($isUserTopic{$key});
+    return $isUserTopic{$key} if defined( $isUserTopic{$key} );
     $isUserTopic{$key} = 0;
-    if (
-        ($web eq Foswiki::Func::getMainWebname()) &&
-        (Foswiki::Func::topicExists($web, $topic)) &&
-        (defined(Foswiki::Func::wikiToUserName("$web.$topic")))
-        ) {
+    if (   ( $web eq Foswiki::Func::getMainWebname() )
+        && ( Foswiki::Func::topicExists( $web, $topic ) )
+        && ( defined( Foswiki::Func::wikiToUserName("$web.$topic") ) ) )
+    {
         $isUserTopic{$key} = 1;
     }
     return $isUserTopic{$key};
 }
-
 
 ###########################################
 
 # The function used to handle the %EXAMPLETAG{...}% variable
 # You would have one of these for each variable you want to process.
 sub _HCARD {
-    my($session, $params, $theTopic, $theWeb) = @_;
+    my ( $session, $params, $theTopic, $theWeb ) = @_;
+
     # $session  - a reference to the TWiki session object (if you don't know
     #             what this is, just ignore it)
     # $params=  - a reference to a Foswiki::Attrs object containing parameters.
@@ -153,32 +163,44 @@ sub _HCARD {
     # $params->{_DEFAULT} will be 'hamburger'
     # $params->{sideorder} will be 'onions'
     my $wikiName;
-    if (defined($params->{_DEFAULT}) &&
-        (_isUserTopic(Foswiki::Func::normalizeWebTopicName(Foswiki::Func::getMainWebname(), $params->{_DEFAULT})))) {
-        $wikiName = $params->{_DEFAULT}
-    } else {
+    if (
+        defined( $params->{_DEFAULT} )
+        && (
+            _isUserTopic(
+                Foswiki::Func::normalizeWebTopicName(
+                    Foswiki::Func::getMainWebname(),
+                    $params->{_DEFAULT}
+                )
+            )
+        )
+      )
+    {
+        $wikiName = $params->{_DEFAULT};
+    }
+    else {
         $wikiName = Foswiki::Func::getWikiName();
     }
     my $hCardTmpl = Foswiki::Func::readTemplate('hcard');
 
     $hCardTmpl =~ s/%HCARDUSER%/$wikiName/ge;
     $hCardTmpl =~ s/%HCARDNAME%/$wikiName/ge;
-    
+
     my $hCardCss = Foswiki::Func::readTemplate('hcardcss');
-    Foswiki::Func::addToHEAD('hCardCss', $hCardCss);
+    Foswiki::Func::addToHEAD( 'hCardCss', $hCardCss );
 
     return "$hCardTmpl";
 }
-sub _HEVENT {
-    my($session, $params, $theTopic, $theWeb) = @_;
 
-    my $start = $params->{start} || '';
-    my $end = $params->{end} || '';
-    my $url = $params->{url} || '';
-    my $location = $params->{location} || '';
+sub _HEVENT {
+    my ( $session, $params, $theTopic, $theWeb ) = @_;
+
+    my $start       = $params->{start}       || '';
+    my $end         = $params->{end}         || '';
+    my $url         = $params->{url}         || '';
+    my $location    = $params->{location}    || '';
     my $description = $params->{description} || '';
-    my $summary = $params->{summary} || $description || $start;
-    
+    my $summary     = $params->{summary}     || $description || $start;
+
     my $hCalendarTmpl = Foswiki::Func::readTemplate('hevent');
 
     $hCalendarTmpl =~ s/%HSTART%/$start/ge;
@@ -187,16 +209,16 @@ sub _HEVENT {
     $hCalendarTmpl =~ s/%HLOCATION%/$location/ge;
     $hCalendarTmpl =~ s/%HSUMMARY%/$summary/ge;
     $hCalendarTmpl =~ s/%HDESCRIPTION%/$description/ge;
-    
+
     my $calname = $summary;
-    $calname =~ s/[^\d]//;
+    $calname       =~ s/[^\d]//;
     $hCalendarTmpl =~ s/%HCALNAME%/$calname/ge;
     $hCalendarTmpl =~ s/\n//g;
-    
-#print STDERR "HEVENT> $start - $summary\n";
+
+    #print STDERR "HEVENT> $start - $summary\n";
 
     my $hCalendarCss = Foswiki::Func::readTemplate('hcardcss');
-    Foswiki::Func::addToHEAD('hCardCss', $hCalendarCss);
+    Foswiki::Func::addToHEAD( 'hCardCss', $hCalendarCss );
 
     return "$hCalendarTmpl";
 }
@@ -249,39 +271,49 @@ Since Foswiki::Plugins::VERSION = '1.026'
 =cut
 
 sub beforeCommonTagsHandler {
+
     # do not uncomment, use $_[0], $_[1]... instead
     #my( $text, $pMap ) = @_;
-    
-return unless (Foswiki::Func::getContext()->{'view'});
 
-    my $foundTime=0;
+    return unless ( Foswiki::Func::getContext()->{'view'} );
+
+    my $foundTime = 0;
     my @processedText;
     my @lines = split( /([\n\r]+)/, $_[0] );
     foreach my $line (@lines) {
-        my $bullet = '';
+        my $bullet    = '';
         my $recurring = '';
-        if ($line =~ s/^(\s+[*\d]\s+)//) {        #CalendarPlugin style - bullets.
+        if ( $line =~ s/^(\s+[*\d]\s+)// ) {    #CalendarPlugin style - bullets.
             $bullet = $1;
-            if ($line =~ s/([wLAE]\s+)//) {
+            if ( $line =~ s/([wLAE]\s+)// ) {
                 $recurring = $1;
             }
         }
+
         #NOTE: parsedate needs the date to be at the begining of the string
-        my ($seconds, $remaining) = parsedate($line, FUZZY => 1);
-        if (defined($seconds) && ($seconds ne '')) {
-            #print STDERR "> ".Foswiki::Func::formatTime($seconds)." : $remaining ($line)\n";
-            
-            my $newline = ($bullet).($recurring)."\%HEVENT{start=\"".Foswiki::Func::formatTime($seconds, '$iso')."\" summary=\"$remaining\"}\%";
+        my ( $seconds, $remaining ) = parsedate( $line, FUZZY => 1 );
+        if ( defined($seconds) && ( $seconds ne '' ) ) {
+
+#print STDERR "> ".Foswiki::Func::formatTime($seconds)." : $remaining ($line)\n";
+
+            my $newline =
+                ($bullet)
+              . ($recurring)
+              . "\%HEVENT{start=\""
+              . Foswiki::Func::formatTime( $seconds, '$iso' )
+              . "\" summary=\"$remaining\"}\%";
             print STDERR ">>> $newline\n";
-            push(@processedText, $newline);
+            push( @processedText, $newline );
             $foundTime++;
-        } else {
+        }
+        else {
+
             #print STDERR "ERROR : $remaining  ($line)\n";
-            push(@processedText, $line);
+            push( @processedText, $line );
         }
     }
-    if ($foundTime>0) {
-        $_[0] = join('', @processedText);
+    if ( $foundTime > 0 ) {
+        $_[0] = join( '', @processedText );
     }
 }
 
