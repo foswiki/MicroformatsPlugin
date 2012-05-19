@@ -87,8 +87,8 @@ sub addMicroIDToHEAD {
         require Digest::MD5;
         $algor = Digest::MD5->new;
     } else {
-        require Digest::SHA1;
-        $algor = Digest::SHA1->new;
+        require Digest::SHA;
+        $algor = Digest::SHA->new;
     }
 
     # Hash the ID's
